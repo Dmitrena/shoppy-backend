@@ -1,10 +1,10 @@
-import { ConfigService } from '@nestjs/config';
-import { UsersService } from './../users/users.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
-import { Response } from 'express';
 import ms from 'ms';
+import * as bcrypt from 'bcrypt';
+import { User } from '@prisma/client';
+import { Response } from 'express';
+import { UsersService } from '../users/users.service';
+import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from './token-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 
@@ -41,15 +41,16 @@ export class AuthService {
     try {
       const user = await this.usersService.getUser({ email });
       const authenticated = await bcrypt.compare(password, user.password);
-
       if (!authenticated) {
         throw new UnauthorizedException();
       }
-
       return user;
     } catch (err) {
-      console.log(err);
       throw new UnauthorizedException('Credentials are not valid.');
     }
+  }
+
+  verifyToken(jwt: string) {
+    this.jwtService.verify(jwt);
   }
 }
