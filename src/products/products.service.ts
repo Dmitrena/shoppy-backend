@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { join } from 'path';
 import { PRODUCT_IMAGES } from './product-images';
 import { CreateProductDto } from './dto/create-product.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -51,5 +52,12 @@ export class ProductsService {
     } catch (err) {
       return false;
     }
+  }
+
+  async update(productId: number, data: Prisma.ProductUpdateInput) {
+    await this.prismaService.product.update({
+      where: { id: productId },
+      data,
+    });
   }
 }
